@@ -66,8 +66,20 @@ router.get('/appointments', async (req, res) => {
     try {
         const { status, date, page = 1, limit = 20 } = req.query
         const query = {}
-        if (status) query.status = status
-        if (date) query.date = date
+
+        const validStatuses = ['pending', 'confirmed', 'completed', 'cancelled']
+        if (status) {
+            if (!validStatuses.includes(status)) {
+                return res.status(400).json({ success: false, message: 'Invalid status filter' })
+            }
+            query.status = status
+        }
+        if (date) {
+            if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+                return res.status(400).json({ success: false, message: 'Invalid date format' })
+            }
+            query.date = date
+        }
 
         const skip = (parseInt(page) - 1) * parseInt(limit)
         const [appointments, total] = await Promise.all([
