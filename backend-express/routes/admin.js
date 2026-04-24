@@ -81,12 +81,14 @@ router.get('/appointments', async (req, res) => {
             query.date = date
         }
 
-        const skip = (parseInt(page) - 1) * parseInt(limit)
+        const pageNum = Math.max(1, parseInt(page, 10) || 1)
+        const limitNum = Math.min(100, Math.max(1, parseInt(limit, 10) || 20))
+        const skip = (pageNum - 1) * limitNum
         const [appointments, total] = await Promise.all([
             Appointment.find(query)
                 .sort({ date: -1, createdAt: -1 })
                 .skip(skip)
-                .limit(parseInt(limit))
+                .limit(limitNum)
                 .populate('user', 'firstName lastName email'),
             Appointment.countDocuments(query)
         ])
@@ -94,7 +96,7 @@ router.get('/appointments', async (req, res) => {
         res.json({
             success: true,
             appointments,
-            pagination: { total, page: parseInt(page), limit: parseInt(limit), pages: Math.ceil(total / parseInt(limit)) }
+            pagination: { total, page: pageNum, limit: limitNum, pages: Math.ceil(total / limitNum) }
         })
     } catch (error) {
         console.error(error)

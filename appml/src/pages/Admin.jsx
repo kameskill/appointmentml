@@ -387,11 +387,26 @@ export default function Admin() {
 
                         <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
                             {[
-                                { color: 'blue', title: 'Seasonal Analysis', body: 'Current season: Spring', sub: 'Popular: Puppy Cut, Summer Cut' },
-                                { color: 'green', title: 'Breed Preferences', body: 'Top breeds by bookings', sub: 'Full data available after first bookings' },
-                                { color: 'purple', title: 'ML Service Status', body: 'Model: Active', sub: 'Serving breed + season predictions' }
-                            ].map(({ color, title, body, sub }) => (
-                                <div key={title} className={`bg-gradient-to-br from-${color}-50 to-${color}-100 rounded-xl p-6 border border-${color}-200`}>
+                                {
+                                    className: 'bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200',
+                                    title: 'Seasonal Analysis',
+                                    body: 'Current season: Spring',
+                                    sub: 'Popular: Puppy Cut, Summer Cut'
+                                },
+                                {
+                                    className: 'bg-gradient-to-br from-green-50 to-green-100 border border-green-200',
+                                    title: 'Breed Preferences',
+                                    body: 'Top breeds by bookings',
+                                    sub: 'Full data available after first bookings'
+                                },
+                                {
+                                    className: 'bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200',
+                                    title: 'ML Service Status',
+                                    body: 'Model: Active',
+                                    sub: 'Serving breed + season predictions'
+                                }
+                            ].map(({ className, title, body, sub }) => (
+                                <div key={title} className={`${className} rounded-xl p-6`}>
                                     <h4 className='font-bold text-gray-900 mb-2'>{title}</h4>
                                     <p className='text-sm text-gray-700 mb-2'>{body}</p>
                                     <p className='text-xs text-gray-600'>{sub}</p>
