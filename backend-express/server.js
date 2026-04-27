@@ -63,8 +63,7 @@ const apiLimiter = rateLimit({
 
 // Routes
 app.use('/api/auth', authLimiter, require('./routes/auth'))
-app.use('/api/appointments', apiLimiter, require('./routes/appointments'))
-app.use('/api/appointments', bookingLimiter)
+app.use('/api/appointments', bookingLimiter, apiLimiter, require('./routes/appointments'))
 app.use('/api/admin', apiLimiter, require('./routes/admin'))
 app.use('/api/contact', contactLimiter, require('./routes/contact'))
 

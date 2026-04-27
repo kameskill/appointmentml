@@ -23,6 +23,9 @@ const BREEDS = [
 
 const ALL_SLOTS = ['09:00', '10:00', '11:00', '13:00', '14:00', '15:00', '16:00']
 
+const formatDate = (date, options) =>
+    date ? new Date(date + 'T12:00:00').toLocaleDateString('en-PH', options) : ''
+
 export default function Booking() {
     const navigate = useNavigate()
     const { user } = useAuth()
@@ -134,7 +137,7 @@ export default function Booking() {
                         <p><strong>Pet:</strong> {formData.petName} ({formData.breed})</p>
                         <p><strong>Service:</strong> {selectedService?.name}</p>
                         {formData.haircutStyle && <p><strong>Style:</strong> {formData.haircutStyle}</p>}
-                        <p><strong>Date:</strong> {new Date(formData.date + 'T12:00:00').toLocaleDateString('en-PH', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                        <p><strong>Date:</strong> {formatDate(formData.date, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
                         <p><strong>Time:</strong> {formData.time}</p>
                     </div>
                     <button onClick={() => navigate('/')}
@@ -375,7 +378,7 @@ export default function Booking() {
                                         <div className='col-span-2'><span className='text-gray-500'>Style:</span> <strong className='text-purple-700'>{formData.haircutStyle} ✨</strong></div>
                                     )}
                                     <div><span className='text-gray-500'>Service:</span> <strong>{selectedService?.name}</strong></div>
-                                    <div><span className='text-gray-500'>Date:</span> <strong>{formData.date && new Date(formData.date + 'T12:00:00').toLocaleDateString('en-PH', { month: 'short', day: 'numeric', year: 'numeric' })}</strong></div>
+                                    <div><span className='text-gray-500'>Date:</span> <strong>{formatDate(formData.date, { month: 'short', day: 'numeric', year: 'numeric' })}</strong></div>
                                     <div><span className='text-gray-500'>Time:</span> <strong>{formData.time}</strong></div>
                                     <div><span className='text-gray-500'>Price:</span> <strong className='text-purple-600'>{selectedService?.price}</strong></div>
                                 </div>

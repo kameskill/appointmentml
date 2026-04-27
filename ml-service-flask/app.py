@@ -6,7 +6,7 @@ a content-based scoring model built with scikit-learn.
 
 import os
 import math
-from datetime import datetime
+from datetime import datetime, timezone
 
 from dotenv import load_dotenv
 from flask import Flask, jsonify, request
@@ -117,7 +117,7 @@ def _get_recommendations(breed: str, season: str, top_n: int = 3) -> list[dict]:
 
 @app.route("/health", methods=["GET"])
 def health():
-    return jsonify({"success": True, "message": "ML service is running", "timestamp": datetime.utcnow().isoformat()})
+    return jsonify({"success": True, "message": "ML service is running", "timestamp": datetime.now(timezone.utc).isoformat()})
 
 
 @app.route("/recommend", methods=["GET", "POST"])
