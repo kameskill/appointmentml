@@ -120,11 +120,20 @@ export default function Booking() {
     }
 
     const handleNextStep = () => {
-        if (step < 3) setStep(step + 1)
+        // Your existing validation logic here
+        if (step < 4) {
+            setStep(step + 1)
+            // Scroll to top instantly
+            window.scrollTo(0, 0)
+        }
     }
 
     const handlePrevStep = () => {
-        if (step > 1) setStep(step - 1)
+        if (step > 1) {
+            setStep(step - 1)
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' })
+        }
     }
 
     const handleSubmit = () => {
