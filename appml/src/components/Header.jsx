@@ -116,7 +116,7 @@ export default function Header({ scrolled }) {
             onClick={() => setIsOpen(!isOpen)}
             className="md:hidden text-gray-700 p-1"
             aria-label="Toggle menu"
-            aria-expanded={isOpen}
+            aria-expanded={isOpen ? 'true' : 'false'}
           >
             {isOpen ? <X size={24} /> : <Menu size={24} />}
           </button>

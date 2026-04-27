@@ -1,5 +1,6 @@
 const express = require('express')
 const router = express.Router()
+const mongoose = require('mongoose')
 const Appointment = require('../models/Appointment')
 const Contact = require('../models/Contact')
 const User = require('../models/User')
@@ -72,13 +73,13 @@ router.get('/appointments', async (req, res) => {
             if (!validStatuses.includes(status)) {
                 return res.status(400).json({ success: false, message: 'Invalid status filter' })
             }
-            query.status = status
+            query.status = String(status)
         }
         if (date) {
             if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
                 return res.status(400).json({ success: false, message: 'Invalid date format' })
             }
-            query.date = date
+            query.date = String(date)
         }
 
         const pageNum = Math.max(1, parseInt(page, 10) || 1)
@@ -113,11 +114,14 @@ router.patch('/appointments/:id/status', async (req, res) => {
     if (!validStatuses.includes(status)) {
         return res.status(400).json({ success: false, message: 'Invalid status' })
     }
+    if (!mongoose.isValidObjectId(req.params.id)) {
+        return res.status(400).json({ success: false, message: 'Invalid appointment ID' })
+    }
 
     try {
         const appointment = await Appointment.findByIdAndUpdate(
             req.params.id,
-            { status },
+            { status: String(status) },
             { new: true }
         )
         if (!appointment) {

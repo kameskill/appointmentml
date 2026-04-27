@@ -1,5 +1,6 @@
 const express = require('express')
 const router = express.Router()
+const mongoose = require('mongoose')
 const { body, validationResult } = require('express-validator')
 const Appointment = require('../models/Appointment')
 const { protect } = require('../middleware/auth')
@@ -39,8 +40,8 @@ router.post(
         try {
             // Check if time slot is already booked for that date
             const existing = await Appointment.findOne({
-                date,
-                time,
+                date: String(date),
+                time: String(time),
                 status: { $in: ['pending', 'confirmed'] }
             })
             if (existing) {
@@ -82,10 +83,13 @@ router.get('/availability', async (req, res) => {
     if (!date) {
         return res.status(400).json({ success: false, message: 'Date query parameter is required' })
     }
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+        return res.status(400).json({ success: false, message: 'Invalid date format' })
+    }
 
     try {
         const bookedSlots = await Appointment.find(
-            { date, status: { $in: ['pending', 'confirmed'] } },
+            { date: String(date), status: { $in: ['pending', 'confirmed'] } },
             { time: 1, _id: 0 }
         )
 
@@ -118,6 +122,9 @@ router.get('/my', protect, async (req, res) => {
 // @desc    Cancel an appointment (owner or admin)
 // @access  Private
 router.delete('/:id', protect, async (req, res) => {
+    if (!mongoose.isValidObjectId(req.params.id)) {
+        return res.status(400).json({ success: false, message: 'Invalid appointment ID' })
+    }
     try {
         const appointment = await Appointment.findById(req.params.id)
         if (!appointment) {

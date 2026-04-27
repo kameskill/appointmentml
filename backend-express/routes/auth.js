@@ -31,7 +31,7 @@ router.post(
         const { firstName, lastName, email, phone, password } = req.body
 
         try {
-            const existingUser = await User.findOne({ email })
+            const existingUser = await User.findOne({ email: String(email) })
             if (existingUser) {
                 return res.status(400).json({ success: false, message: 'Email already registered' })
             }
@@ -76,7 +76,7 @@ router.post(
         const { email, password } = req.body
 
         try {
-            const user = await User.findOne({ email }).select('+password')
+            const user = await User.findOne({ email: String(email) }).select('+password')
             if (!user) {
                 return res.status(401).json({ success: false, message: 'Invalid email or password' })
             }
