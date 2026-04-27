@@ -1,113 +1,180 @@
-# Timmy Tails - Pet Grooming Appointment System
+# Timmy Tails — Dog Grooming Appointment System
 
-AI-powered pet grooming appointment booking platform with ML-driven haircut recommendations by breed.
+AI-powered pet grooming appointment booking platform with ML-driven haircut recommendations by breed and season.
 
 ## 🚀 Features
 
 ### Frontend (React + Tailwind)
-- ✅ Home page with hero section
+- ✅ Home page with hero section and trust badges
 - ✅ Services showcase
-- ✅ About & Contact pages
-- ✅ User authentication (Login/Signup)
-- ✅ Booking system with breed selection
-- ✅ Admin dashboard with analytics
-- ✅ ML Trends tab for AI predictions
+- ✅ About & Contact pages (submits to backend)
+- ✅ User authentication (Login/Signup → JWT)
+- ✅ Auth-aware header (shows logged-in user, logout)
+- ✅ Booking system with real ML recommendations
+- ✅ Real-time time slot availability from backend
+- ✅ Admin dashboard with live data from backend
+- ✅ Toast notifications replacing all browser alerts
+- ✅ Loading states throughout
 
-### Upcoming - Backend
-- Express.js REST API
-- Python Flask ML microservice
-- MongoDB database
-- JWT authentication
-- Real-time appointment management
+### Backend (Express.js + MongoDB Atlas)
+- ✅ JWT authentication (register / login / me)
+- ✅ Appointments CRUD (create, availability check, cancel)
+- ✅ Admin APIs (stats, appointments, analytics, contacts)
+- ✅ Contact message storage
+- ✅ CORS-protected API
+- ✅ Rate limiting (auth: 20/15 min · booking: 10/hr · contact: 5/hr · general: 200/15 min)
+
+### ML Service (Python Flask)
+- ✅ Content-based scoring using breed characteristics (coat type, size, shedding, season sensitivity)
+- ✅ Season-aware recommendations (Spring / Summer / Fall / Winter)
+- ✅ `/recommend?breed=Poodle&season=spring` endpoint
+- ✅ Ranked results with match % and popularity
 
 ## 📋 Tech Stack
 
-**Frontend:**
-- React 18
-- React Router v6
-- Tailwind CSS
-- Framer Motion (animations)
-- Lucide icons
-
-**Backend (In Progress):**
-- Node.js + Express.js
-- Python + Flask (ML)
-- MongoDB
-- scikit-learn (ML models)
+| Layer | Technology |
+|---|---|
+| Frontend | React 19, React Router v7, Tailwind CSS v4, Framer Motion, Lucide Icons |
+| Backend | Node.js, Express.js, Mongoose, JWT, bcryptjs |
+| Database | MongoDB Atlas |
+| ML Service | Python 3.11+, Flask 3, scikit-learn, pandas |
 
 ## 📁 Project Structure
 
 ```
-appointml/
-├── appml/                    # React Frontend
+appointmentml/
+├── appml/                     # React Frontend
 │   ├── src/
-│   │   ├── pages/           # All page components
-│   │   ├── components/      # Reusable components
-│   │   ├── App.jsx
-│   │   └── index.css
-│   ├── public/
+│   │   ├── context/           # AuthContext (JWT + user state)
+│   │   ├── utils/api.js       # Axios API helpers
+│   │   ├── pages/             # All page components
+│   │   ├── components/        # Reusable components
+│   │   └── main.jsx
+│   ├── .env.example
 │   └── package.json
 │
-├── backend-express/         # (Coming Soon)
-│   ├── routes/
-│   ├── models/
-│   ├── controllers/
-│   └── server.js
+├── backend-express/           # REST API
+│   ├── config/db.js           # MongoDB Atlas connection
+│   ├── middleware/auth.js     # JWT protect + adminOnly
+│   ├── models/                # User, Appointment, Contact
+│   ├── routes/                # auth, appointments, admin, contact
+│   ├── server.js
+│   └── .env.example
 │
-└── ml-service-flask/        # (Coming Soon)
-    ├── models/
-    ├── app.py
+└── ml-service-flask/          # ML Recommendation Service
+    ├── app.py                 # Flask routes
+    ├── data/breed_data.py     # Breed characteristics + haircut catalog
     └── requirements.txt
 ```
 
-## 🎯 Next Steps
+## 🔧 Setup & Installation
 
-1. **Backend Setup**
-   - Initialize Express.js server
-   - Setup MongoDB connection
-   - Create authentication routes
-   - Implement booking APIs
+### 1. MongoDB Atlas
+1. Create a free cluster at [mongodb.com/cloud/atlas](https://www.mongodb.com/cloud/atlas)
+2. Get your connection string — it looks like:
+   `mongodb+srv://<user>:<password>@cluster0.mongodb.net/timmytails`
+3. Add `0.0.0.0/0` to your IP Allowlist (or your server IP)
 
-2. **ML Integration**
-   - Setup Flask microservice
-   - Create breed/haircut dataset
-   - Train recommendation model
-   - Integrate with frontend
-
-3. **Deployment**
-   - Deploy frontend (Vercel/Netlify)
-   - Deploy backend (Heroku/Railway)
-   - Deploy ML service
-
-## 🔧 Installation
+### 2. Backend (Express.js)
 
 ```bash
-# Frontend
-cd appml
+cd backend-express
 npm install
-npm run dev
 
-# Coming soon - Backend setup instructions
+# Create .env from example
+cp .env.example .env
+# Edit .env and fill in MONGODB_URI and JWT_SECRET
+
+npm run dev   # development (nodemon)
+# or
+npm start     # production
 ```
 
-## 📱 Pages
+Environment variables (`.env`):
+```
+PORT=5000
+MONGODB_URI=mongodb+srv://<user>:<password>@cluster0.mongodb.net/timmytails
+JWT_SECRET=<random_long_secret>
+JWT_EXPIRE=7d
+ML_SERVICE_URL=http://localhost:5001
+NODE_ENV=development
+FRONTEND_URL=http://localhost:5173
+```
 
-- **Home** - Landing page with CTA
-- **Services** - Grooming services showcase
-- **About** - About Timmy Tails
-- **Contact** - Contact form
-- **Booking** - Appointment booking with ML recommendations
-- **Login** - User authentication
-- **Signup** - User registration
-- **Admin** - Analytics & management dashboard
+### 3. ML Service (Flask)
 
-## 👤 Admin Dashboard Features
+```bash
+cd ml-service-flask
 
-- Overview with KPIs
-- Appointment management
-- Analytics with charts
-- ML-powered trend analysis
-- Revenue tracking
+# Create virtual environment
+python -m venv venv
+source venv/bin/activate   # Windows: venv\Scripts\activate
+
+pip install -r requirements.txt
+
+cp .env.example .env
+python app.py   # runs on port 5001
+```
+
+### 4. Frontend (React)
+
+```bash
+cd appml
+npm install
+
+cp .env.example .env
+# .env contents:
+# VITE_API_URL=http://localhost:5000/api
+# VITE_ML_URL=http://localhost:5001
+
+npm run dev   # runs on port 5173
+```
+
+## 🔑 Create Admin Account
+
+After starting the backend, register a normal user, then update the role in MongoDB Atlas:
+```
+db.users.updateOne({ email: "admin@example.com" }, { $set: { role: "admin" } })
+```
+Then login with that account — the header will show "Admin" link.
+
+## 📡 API Reference
+
+### Auth
+| Method | Path | Description |
+|---|---|---|
+| POST | `/api/auth/register` | Register new user |
+| POST | `/api/auth/login` | Login and get JWT |
+| GET | `/api/auth/me` | Get current user (requires JWT) |
+
+### Appointments
+| Method | Path | Description |
+|---|---|---|
+| POST | `/api/appointments` | Create appointment |
+| GET | `/api/appointments/availability?date=YYYY-MM-DD` | Get booked slots |
+| GET | `/api/appointments/my` | User's appointments (JWT) |
+| DELETE | `/api/appointments/:id` | Cancel appointment (JWT) |
+
+### ML Service
+| Method | Path | Description |
+|---|---|---|
+| GET | `/recommend?breed=Poodle&season=spring` | Get recommendations |
+| GET | `/season` | Current season |
+| GET | `/breeds` | List all breeds |
+
+### Contact
+| Method | Path | Description |
+|---|---|---|
+| POST | `/api/contact` | Submit contact message |
+
+### Admin (requires admin JWT)
+| Method | Path | Description |
+|---|---|---|
+| GET | `/api/admin/stats` | Dashboard stats |
+| GET | `/api/admin/appointments?status=&date=&page=&limit=` | All appointments (paginated, max 100/page) |
+| PATCH | `/api/admin/appointments/:id/status` | Update status |
+| GET | `/api/admin/analytics` | Revenue + trends |
+| GET | `/api/admin/contacts` | All contact messages |
 
 ## 📧 Contact
 
@@ -115,4 +182,5 @@ For issues or questions, reach out to admin@timmytails.com
 
 ## 📄 License
 
-MIT License - feel free to use this project!
+MIT License
+
