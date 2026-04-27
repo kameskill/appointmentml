@@ -22,6 +22,7 @@ AI-powered pet grooming appointment booking platform with ML-driven haircut reco
 - ✅ Admin APIs (stats, appointments, analytics, contacts)
 - ✅ Contact message storage
 - ✅ CORS-protected API
+- ✅ Rate limiting (auth: 20/15 min · booking: 10/hr · contact: 5/hr · general: 200/15 min)
 
 ### ML Service (Python Flask)
 - ✅ Content-based scoring using breed characteristics (coat type, size, shedding, season sensitivity)
@@ -161,13 +162,19 @@ Then login with that account — the header will show "Admin" link.
 | GET | `/season` | Current season |
 | GET | `/breeds` | List all breeds |
 
+### Contact
+| Method | Path | Description |
+|---|---|---|
+| POST | `/api/contact` | Submit contact message |
+
 ### Admin (requires admin JWT)
 | Method | Path | Description |
 |---|---|---|
 | GET | `/api/admin/stats` | Dashboard stats |
-| GET | `/api/admin/appointments` | All appointments |
+| GET | `/api/admin/appointments?status=&date=&page=&limit=` | All appointments (paginated, max 100/page) |
 | PATCH | `/api/admin/appointments/:id/status` | Update status |
 | GET | `/api/admin/analytics` | Revenue + trends |
+| GET | `/api/admin/contacts` | All contact messages |
 
 ## 📧 Contact
 
