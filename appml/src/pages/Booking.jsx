@@ -6,6 +6,7 @@ import toast from 'react-hot-toast'
 import { appointmentsApi, mlRecommendApi, getErrorMessage } from '../utils/api'
 import { useAuth } from '../context/AuthContext'
 import { useAdminRedirect } from '../utils/useAdminRedirect'
+import { formatTime } from '../utils/formatters'
 
 const SERVICES = [
     { id: 1, name: 'Full Grooming Package', description: 'Complete grooming with bath, haircut, nail trim, and ear cleaning', duration: '120 min', price: '₱1,200' },
@@ -26,14 +27,6 @@ const ALL_SLOTS = ['09:00', '10:00', '11:00', '13:00', '14:00', '15:00', '16:00'
 
 const formatDate = (date, options) =>
     date ? new Date(date + 'T12:00:00').toLocaleDateString('en-PH', options) : ''
-
-const formatTime = (time) => {
-    if (!time) return ''
-    const [h, m] = time.split(':').map(Number)
-    const period = h >= 12 ? 'PM' : 'AM'
-    const hour = h % 12 || 12
-    return `${hour}:${String(m).padStart(2, '0')} ${period}`
-}
 
 export default function Booking() {
     const navigate = useNavigate()

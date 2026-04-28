@@ -5,20 +5,13 @@ import { LogOut, BarChart3, Calendar, TrendingUp, Users, DollarSign, CheckCircle
 import toast from 'react-hot-toast'
 import { adminApi, getErrorMessage } from '../utils/api'
 import { useAuth } from '../context/AuthContext'
+import { formatTime } from '../utils/formatters'
 
 const STATUS_COLORS = {
     pending: 'bg-yellow-100 text-yellow-700',
     confirmed: 'bg-green-100 text-green-700',
     completed: 'bg-blue-100 text-blue-700',
     cancelled: 'bg-red-100 text-red-700'
-}
-
-const formatTime = (time) => {
-    if (!time) return ''
-    const [h, m] = time.split(':').map(Number)
-    const period = h >= 12 ? 'PM' : 'AM'
-    const hour = h % 12 || 12
-    return `${hour}:${String(m).padStart(2, '0')} ${period}`
 }
 
 const formatDate = (dateStr) => {
