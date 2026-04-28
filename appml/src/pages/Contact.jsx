@@ -1,12 +1,14 @@
 import { motion } from 'framer-motion'
-import { Mail, Phone, MapPin } from 'lucide-react'
+import { Mail, Phone, MapPin, Clock } from 'lucide-react'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import { contactApi, getErrorMessage } from '../utils/api'
+import { useAdminRedirect } from '../utils/useAdminRedirect'
 
 export default function Contact() {
     const navigate = useNavigate()
+    useAdminRedirect()
     const [formData, setFormData] = useState({ name: '', email: '', phone: '', message: '' })
     const [isLoading, setIsLoading] = useState(false)
 
@@ -65,7 +67,10 @@ export default function Contact() {
                         </div>
 
                         <div className='bg-purple-50 rounded-xl p-5 border border-purple-100'>
-                            <h3 className='font-bold text-gray-900 mb-2'>🕐 Business Hours</h3>
+                            <h3 className='font-bold text-gray-900 mb-2 flex items-center gap-2'>
+                                <Clock size={16} className='text-purple-600' />
+                                Business Hours
+                            </h3>
                             <div className='space-y-1 text-sm text-gray-600'>
                                 <p>Monday – Friday: <strong>9:00 AM – 5:00 PM</strong></p>
                                 <p>Saturday: <strong>9:00 AM – 3:00 PM</strong></p>

@@ -1,9 +1,11 @@
 import { motion } from 'framer-motion'
 import { Sparkles, Bath, Scissors, Clock } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
+import { useAdminRedirect } from '../utils/useAdminRedirect'
 
 export default function Services() {
     const navigate = useNavigate()
+    useAdminRedirect()
 
     const services = [
         {

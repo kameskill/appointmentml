@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ArrowLeft, Clock, Sparkles, Loader2, CheckCircle2, CalendarCheck } from 'lucide-react'
+import { ArrowLeft, Clock, Sparkles, Loader2, CheckCircle2, CalendarCheck, TrendingUp } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import { appointmentsApi, mlRecommendApi, getErrorMessage } from '../utils/api'
 import { useAuth } from '../context/AuthContext'
+import { useAdminRedirect } from '../utils/useAdminRedirect'
+import { formatTime } from '../utils/formatters'
 
 const SERVICES = [
     { id: 1, name: 'Full Grooming Package', description: 'Complete grooming with bath, haircut, nail trim, and ear cleaning', duration: '120 min', price: '₱1,200' },
@@ -29,6 +31,7 @@ const formatDate = (date, options) =>
 export default function Booking() {
     const navigate = useNavigate()
     const { user } = useAuth()
+    useAdminRedirect()
     const [step, setStep] = useState(1)
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [isBooked, setIsBooked] = useState(false)
@@ -130,7 +133,7 @@ export default function Booking() {
                         className='w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6'>
                         <CalendarCheck size={40} className='text-green-600' />
                     </motion.div>
-                    <h2 className='text-3xl font-bold text-gray-900 mb-3'>Booking Confirmed! 🐾</h2>
+                    <h2 className='text-3xl font-bold text-gray-900 mb-3'>Booking Confirmed!</h2>
                     <p className='text-gray-600 mb-2'>Your appointment has been submitted.</p>
                     <p className='text-gray-500 text-sm mb-8'>We'll reach out at <strong>{formData.ownerEmail}</strong> to confirm your booking shortly.</p>
                     <div className='bg-purple-50 rounded-xl p-4 text-left mb-6 text-sm space-y-2'>
@@ -138,12 +141,13 @@ export default function Booking() {
                         <p><strong>Service:</strong> {selectedService?.name}</p>
                         {formData.haircutStyle && <p><strong>Style:</strong> {formData.haircutStyle}</p>}
                         <p><strong>Date:</strong> {formatDate(formData.date, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
-                        <p><strong>Time:</strong> {formData.time}</p>
+                        <p><strong>Time:</strong> {formatTime(formData.time)}</p>
                     </div>
-                    <button onClick={() => navigate('/')}
-                        className='w-full bg-gradient-to-r from-purple-600 to-purple-500 text-white py-3 rounded-lg font-bold hover:shadow-lg transition-all'>
+                    <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
+                        onClick={() => navigate('/')}
+                        className='w-full bg-gradient-to-r from-purple-600 to-purple-500 text-white py-3 rounded-lg font-bold hover:shadow-lg hover:shadow-purple-500/50 transition-all'>
                         Back to Home
-                    </button>
+                    </motion.button>
                 </motion.div>
             </div>
         )
@@ -237,7 +241,7 @@ export default function Booking() {
                                                         </div>
                                                         <p className='text-xs text-gray-500 mb-2 line-clamp-2'>{rec.description}</p>
                                                         <div className='flex justify-between items-center text-xs text-gray-500'>
-                                                            <span>📈 {rec.popularity}</span>
+                                                            <span className='flex items-center gap-1'><TrendingUp size={12} className='text-purple-500' /> {rec.popularity}</span>
                                                             <span className='font-bold text-purple-600'>{rec.price}</span>
                                                         </div>
                                                         {formData.haircutStyle === rec.name && (
@@ -304,7 +308,7 @@ export default function Booking() {
                                                 disabled={isBooked}
                                                 onClick={() => !isBooked && setFormData(prev => ({ ...prev, time }))}
                                                 className={`py-3 px-3 rounded-lg font-bold transition-all text-sm ${isBooked ? 'bg-gray-100 text-gray-400 cursor-not-allowed line-through' : isSelected ? 'bg-purple-600 text-white shadow-md' : 'bg-gray-100 text-gray-700 hover:bg-purple-100 hover:text-purple-700'}`}>
-                                                {time}
+                                                {formatTime(time)}
                                                 {isBooked && <span className='block text-xs font-normal'>Booked</span>}
                                             </motion.button>
                                         )
@@ -375,11 +379,11 @@ export default function Booking() {
                                     <div><span className='text-gray-500'>Pet:</span> <strong>{formData.petName}</strong></div>
                                     <div><span className='text-gray-500'>Breed:</span> <strong>{formData.breed}</strong></div>
                                     {formData.haircutStyle && (
-                                        <div className='col-span-2'><span className='text-gray-500'>Style:</span> <strong className='text-purple-700'>{formData.haircutStyle} ✨</strong></div>
+                                        <div className='col-span-2'><span className='text-gray-500'>Style:</span> <strong className='text-purple-700'>{formData.haircutStyle}</strong></div>
                                     )}
                                     <div><span className='text-gray-500'>Service:</span> <strong>{selectedService?.name}</strong></div>
                                     <div><span className='text-gray-500'>Date:</span> <strong>{formatDate(formData.date, { month: 'short', day: 'numeric', year: 'numeric' })}</strong></div>
-                                    <div><span className='text-gray-500'>Time:</span> <strong>{formData.time}</strong></div>
+                                    <div><span className='text-gray-500'>Time:</span> <strong>{formatTime(formData.time)}</strong></div>
                                     <div><span className='text-gray-500'>Price:</span> <strong className='text-purple-600'>{selectedService?.price}</strong></div>
                                 </div>
                             </div>
@@ -394,7 +398,7 @@ export default function Booking() {
                                         <span className='flex items-center justify-center gap-2'>
                                             <Loader2 className='animate-spin' size={18} /> Booking...
                                         </span>
-                                    ) : 'Confirm Booking 🐾'}
+                                    ) : 'Confirm Booking'}
                                 </motion.button>
                             </div>
                         </motion.div>

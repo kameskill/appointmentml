@@ -118,7 +118,7 @@ export default function Header({ scrolled }) {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden text-gray-700 p-1"
+            className="md:hidden text-gray-700 p-1 hover:text-purple-600 transition-colors"
             aria-label="Toggle menu"
             aria-expanded={isOpen}
           >
@@ -156,7 +156,7 @@ export default function Header({ scrolled }) {
                 {user ? (
                   <div className="space-y-2">
                     <p className="text-sm text-gray-500">Signed in as <span className="font-bold text-gray-800">{user.firstName} {user.lastName}</span></p>
-                    <button onClick={handleLogout} className="w-full flex items-center justify-center gap-2 text-red-500 border-2 border-red-200 px-4 py-2 rounded-full font-medium">
+                    <button onClick={handleLogout} className="w-full flex items-center justify-center gap-2 text-red-500 border-2 border-red-200 px-4 py-2 rounded-full font-medium hover:bg-red-50 transition-all">
                       <LogOut size={16} /> Logout
                     </button>
                   </div>

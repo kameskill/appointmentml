@@ -24,7 +24,7 @@ export default function Hero() {
           className='inline-flex items-center gap-2 bg-purple-100 text-purple-700 px-5 py-2.5 rounded-full text-sm font-bold mb-6 border border-purple-200'
         >
           <Star size={14} className='text-yellow-500 fill-yellow-500' />
-          🐾 Premium Dog Grooming — AI Powered
+          Premium Dog Grooming — AI Powered
         </motion.div>
 
         <h1 className='text-5xl md:text-7xl font-bold text-gray-900 mb-6 leading-tight'>

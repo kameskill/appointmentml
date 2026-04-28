@@ -5,12 +5,20 @@ import { LogOut, BarChart3, Calendar, TrendingUp, Users, DollarSign, CheckCircle
 import toast from 'react-hot-toast'
 import { adminApi, getErrorMessage } from '../utils/api'
 import { useAuth } from '../context/AuthContext'
+import { formatTime } from '../utils/formatters'
 
 const STATUS_COLORS = {
     pending: 'bg-yellow-100 text-yellow-700',
     confirmed: 'bg-green-100 text-green-700',
     completed: 'bg-blue-100 text-blue-700',
     cancelled: 'bg-red-100 text-red-700'
+}
+
+const formatDate = (dateStr) => {
+    if (!dateStr) return ''
+    return new Date(dateStr + 'T12:00:00').toLocaleDateString('en-PH', {
+        month: 'short', day: 'numeric', year: 'numeric'
+    })
 }
 
 export default function Admin() {
@@ -192,25 +200,26 @@ export default function Admin() {
                             </div>
                         )}
 
-                        {/* Today's appointments */}
+                        {/* All appointments */}
                         <div className='bg-white rounded-xl p-8 shadow-md border border-gray-100'>
-                            <h2 className='text-xl font-bold text-gray-900 mb-6'>Today's Schedule</h2>
-                            {appointments.filter(a => a.date === new Date().toISOString().split('T')[0]).length > 0 ? (
+                            <h2 className='text-xl font-bold text-gray-900 mb-6'>All Appointments</h2>
+                            {appointments.length > 0 ? (
                                 <div className='space-y-3'>
-                                    {appointments.filter(a => a.date === new Date().toISOString().split('T')[0]).map((a, idx) => (
+                                    {appointments.map((a, idx) => (
                                         <motion.div key={idx} whileHover={{ x: 5 }}
                                             className='flex items-center gap-4 p-4 bg-gray-50 rounded-lg border border-gray-200'>
-                                            <Clock size={20} className='text-purple-600' />
+                                            <Clock size={20} className='text-purple-600 flex-shrink-0' />
                                             <div className='flex-1'>
-                                                <p className='font-bold text-gray-900'>{a.time} — {a.ownerName}</p>
+                                                <p className='font-bold text-gray-900'>{formatTime(a.time)} — {a.ownerName}</p>
                                                 <p className='text-sm text-gray-600'>{a.petName} ({a.breed}) · {a.service}</p>
+                                                <p className='text-xs text-gray-400 mt-0.5'>{formatDate(a.date)}</p>
                                             </div>
                                             <span className={`px-3 py-1 rounded-full text-xs font-bold ${STATUS_COLORS[a.status] || 'bg-gray-100 text-gray-600'}`}>{a.status}</span>
                                         </motion.div>
                                     ))}
                                 </div>
                             ) : (
-                                <p className='text-gray-500 text-center py-8'>No appointments scheduled for today.</p>
+                                <p className='text-gray-500 text-center py-8'>No appointments found.</p>
                             )}
                         </div>
                     </motion.div>
@@ -253,8 +262,8 @@ export default function Admin() {
                                                         <td className='px-4 py-3 font-medium text-gray-900'>{a.ownerName}</td>
                                                         <td className='px-4 py-3 text-gray-600'>{a.petName} ({a.breed})</td>
                                                         <td className='px-4 py-3 text-gray-600'>{a.service}</td>
-                                                        <td className='px-4 py-3 text-gray-600'>{a.date}</td>
-                                                        <td className='px-4 py-3 text-gray-600'>{a.time}</td>
+                                                        <td className='px-4 py-3 text-gray-600'>{formatDate(a.date)}</td>
+                                                        <td className='px-4 py-3 text-gray-600'>{formatTime(a.time)}</td>
                                                         <td className='px-4 py-3 font-bold text-gray-900'>₱{a.price?.toLocaleString()}</td>
                                                         <td className='px-4 py-3'>
                                                             <span className={`px-2 py-1 rounded-full text-xs font-bold ${STATUS_COLORS[a.status] || 'bg-gray-100 text-gray-600'}`}>{a.status}</span>
