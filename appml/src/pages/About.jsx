@@ -1,6 +1,9 @@
 import { motion } from 'framer-motion'
+import { useAdminRedirect } from '../utils/useAdminRedirect'
 
 export default function About() {
+    useAdminRedirect()
+
     return (
         <section className='pt-32 pb-20 px-4'>
             <div className='max-w-4xl mx-auto'>

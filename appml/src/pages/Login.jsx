@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { useNavigate, Link } from 'react-router-dom'
-import { Mail, Lock, Eye, EyeOff } from 'lucide-react'
+import { Mail, Lock, Eye, EyeOff, Scissors } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { useAuth } from '../context/AuthContext'
 import { getErrorMessage } from '../utils/api'
@@ -76,7 +76,7 @@ export default function Login() {
                     <div className='text-center mb-8'>
                         <motion.div whileHover={{ scale: 1.1 }} className='inline-block mb-4'>
                             <div className='w-16 h-16 rounded-full bg-gradient-to-br from-purple-600 to-purple-500 flex items-center justify-center'>
-                                <span className='text-2xl'>🐾</span>
+                                <Scissors size={28} className='text-white' />
                             </div>
                         </motion.div>
                         <h1 className='text-3xl font-bold text-gray-900 mb-2'>Welcome Back</h1>
