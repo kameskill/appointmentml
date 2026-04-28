@@ -5,6 +5,7 @@ import { Mail, Lock, Eye, EyeOff } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { useAuth } from '../context/AuthContext'
 import { getErrorMessage } from '../utils/api'
+import { useEffect } from 'react'
 
 export default function Login() {
     const navigate = useNavigate()
@@ -13,7 +14,15 @@ export default function Login() {
     const [formData, setFormData] = useState({ email: '', password: '' })
     const [errors, setErrors] = useState({})
     const [isLoading, setIsLoading] = useState(false)
+    const { user } = useAuth()
 
+    useEffect(() => {
+        if (user?.role === 'admin') {
+            navigate('/admin', { replace: true })
+        }
+    }, [user, navigate])
+
+    const navigate2 = useNavigate()
     const handleInputChange = (e) => {
         const { name, value } = e.target
         setFormData(prev => ({ ...prev, [name]: value }))
@@ -40,7 +49,13 @@ export default function Login() {
         try {
             const data = await login(formData.email, formData.password)
             toast.success(`Welcome back, ${data.user.firstName}!`)
-            navigate(data.user.role === 'admin' ? '/admin' : '/')
+
+            // Redirect to admin dashboard if user is admin
+            if (data.user.role === 'admin') {
+                navigate('/admin')
+            } else {
+                navigate('/')
+            }
         } catch (error) {
             toast.error(getErrorMessage(error))
         } finally {

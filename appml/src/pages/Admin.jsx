@@ -113,7 +113,7 @@ export default function Admin() {
         : 1
 
     return (
-        <div className='min-h-screen bg-gray-50 pt-20'>
+        <div className='min-h-screen bg-gray-50'>
             {/* Header */}
             <div className='bg-white border-b border-gray-200'>
                 <div className='max-w-7xl mx-auto px-4 py-6 flex justify-between items-center'>

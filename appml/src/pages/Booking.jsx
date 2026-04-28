@@ -95,30 +95,59 @@ export default function Booking() {
         setFormData(prev => ({ ...prev, breed: e.target.value, haircutStyle: null }))
     }
 
-    const handleServiceSelect = (serviceId) => {
-        setFormData(prev => ({ ...prev, service: serviceId }))
+    const handleSubmit = async () => {
+        if (!formData.ownerName || !formData.ownerEmail || !formData.ownerPhone) {
+            toast.error('Please fill in all contact details')
+            return
+        }
+        setIsSubmitting(true)
+        try {
+            const selectedService = SERVICES.find(s => s.id === formData.service)
+            await appointmentsApi.create({
+                ...formData,
+                service: selectedService?.name
+            })
+            setIsBooked(true)
+        } catch (error) {
+            toast.error(getErrorMessage(error))
+        } finally {
+            setIsSubmitting(false)
+        }
     }
 
-    const handleHaircutSelect = (haircutName) => {
-        setFormData(prev => ({ ...prev, haircutStyle: haircutName }))
-    }
+    const selectedService = SERVICES.find(s => s.id === formData.service)
 
-    const handleNextStep = () => {
-        if (step < 3) setStep(step + 1)
+    // ── Success Screen ──────────────────────────────────────────────────────
+    if (isBooked) {
+        return (
+            <div className='min-h-screen bg-gradient-to-br from-white via-purple-50 to-white pt-32 pb-20 px-4 flex items-center justify-center'>
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className='bg-white rounded-2xl p-10 shadow-2xl border border-gray-100 text-center max-w-md w-full'
+                >
+                    <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.2, type: 'spring' }}
+                        className='w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6'>
+                        <CalendarCheck size={40} className='text-green-600' />
+                    </motion.div>
+                    <h2 className='text-3xl font-bold text-gray-900 mb-3'>Booking Confirmed! 🐾</h2>
+                    <p className='text-gray-600 mb-2'>Your appointment has been submitted.</p>
+                    <p className='text-gray-500 text-sm mb-8'>We'll reach out at <strong>{formData.ownerEmail}</strong> to confirm your booking shortly.</p>
+                    <div className='bg-purple-50 rounded-xl p-4 text-left mb-6 text-sm space-y-2'>
+                        <p><strong>Pet:</strong> {formData.petName} ({formData.breed})</p>
+                        <p><strong>Service:</strong> {selectedService?.name}</p>
+                        {formData.haircutStyle && <p><strong>Style:</strong> {formData.haircutStyle}</p>}
+                        <p><strong>Date:</strong> {formatDate(formData.date, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                        <p><strong>Time:</strong> {formData.time}</p>
+                    </div>
+                    <button onClick={() => navigate('/')}
+                        className='w-full bg-gradient-to-r from-purple-600 to-purple-500 text-white py-3 rounded-lg font-bold hover:shadow-lg transition-all'>
+                        Back to Home
+                    </button>
+                </motion.div>
+            </div>
+        )
     }
-
-    const handlePrevStep = () => {
-        if (step > 1) setStep(step - 1)
-    }
-
-    const handleSubmit = () => {
-        console.log('Booking submitted:', formData)
-        alert('Appointment booked successfully! You will receive a confirmation email shortly.')
-        navigate('/')
-    }
-
-    const selectedService = services.find(s => s.id === formData.service)
-    const breedRecommendationsList = breedRecommendations[formData.breed] || []
 
     return (
         <div className='min-h-screen bg-gradient-to-br from-white via-purple-50 to-white pt-32 pb-20 px-4'>

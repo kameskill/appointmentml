@@ -1,12 +1,13 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { Menu, X, LogOut, User } from 'lucide-react'
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useLocation, Link, useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import { useAuth } from '../context/AuthContext'
 
 export default function Header({ scrolled }) {
   const [isOpen, setIsOpen] = useState(false)
+  const location = useLocation()
   const navigate = useNavigate()
   const { user, logout } = useAuth()
 
@@ -17,6 +18,9 @@ export default function Header({ scrolled }) {
     { label: 'Contact', href: '/contact' },
   ]
 
+  if (location.pathname === '/admin') {
+    return null
+  }
   const handleLogout = () => {
     logout()
     toast.success('Logged out successfully')
@@ -27,8 +31,8 @@ export default function Header({ scrolled }) {
   return (
     <header
       className={`fixed w-full top-0 z-50 transition-all duration-300 ${scrolled
-          ? 'bg-white/95 backdrop-blur-md shadow-lg'
-          : 'bg-transparent'
+        ? 'bg-white/95 backdrop-blur-md shadow-lg'
+        : 'bg-transparent'
         }`}
     >
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
