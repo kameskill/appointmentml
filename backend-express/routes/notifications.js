@@ -3,6 +3,7 @@ const router = express.Router()
 const mongoose = require('mongoose')
 const Notification = require('../models/Notification')
 const { protect } = require('../middleware/auth')
+const USER_NOTIFICATION_LIMIT = 50
 
 // @route   GET /api/notifications
 // @desc    Get notifications for logged-in users
@@ -11,7 +12,7 @@ router.get('/', protect, async (req, res) => {
     try {
         const notifications = await Notification.find({ audience: 'all-users' })
             .sort({ createdAt: -1 })
-            .limit(50)
+            .limit(USER_NOTIFICATION_LIMIT)
 
         const userId = req.user._id.toString()
         const items = notifications.map((n) => ({

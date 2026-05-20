@@ -15,7 +15,7 @@ const generateToken = (id) => {
     })
 }
 
-const validate = (req, res) => {
+const validateRequest = (req, res) => {
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
         res.status(400).json({ success: false, errors: errors.array() })
@@ -24,7 +24,7 @@ const validate = (req, res) => {
     return true
 }
 
-const generateOtpCode = () => `${Math.floor(100000 + Math.random() * 900000)}`
+const generateSixDigitOtp = () => `${Math.floor(100000 + Math.random() * 900000)}`
 
 // @route   POST /api/auth/register/send-otp
 // @desc    Send OTP for account creation
@@ -39,7 +39,7 @@ router.post(
         body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters')
     ],
     async (req, res) => {
-        if (!validate(req, res)) return
+        if (!validateRequest(req, res)) return
 
         const { firstName, lastName, email, phone, password } = req.body
 
@@ -49,7 +49,7 @@ router.post(
                 return res.status(400).json({ success: false, message: 'Email already registered' })
             }
 
-            const code = generateOtpCode()
+            const code = generateSixDigitOtp()
             const otpHash = await bcrypt.hash(code, 10)
             const expiresAt = new Date(Date.now() + OTP_TTL_MS)
 
@@ -96,7 +96,7 @@ router.post(
         body('otp').isLength({ min: 6, max: 6 }).withMessage('OTP must be 6 digits')
     ],
     async (req, res) => {
-        if (!validate(req, res)) return
+        if (!validateRequest(req, res)) return
 
         const { email, phone, otp } = req.body
 
@@ -162,7 +162,7 @@ router.post(
         body('phone').notEmpty().trim().withMessage('Phone is required')
     ],
     async (req, res) => {
-        if (!validate(req, res)) return
+        if (!validateRequest(req, res)) return
 
         const { phone } = req.body
 
@@ -172,7 +172,7 @@ router.post(
                 return res.status(404).json({ success: false, message: 'No account found with this mobile number' })
             }
 
-            const code = generateOtpCode()
+            const code = generateSixDigitOtp()
             const otpHash = await bcrypt.hash(code, 10)
             const expiresAt = new Date(Date.now() + OTP_TTL_MS)
 
@@ -210,7 +210,7 @@ router.post(
         body('newPassword').isLength({ min: 6 }).withMessage('Password must be at least 6 characters')
     ],
     async (req, res) => {
-        if (!validate(req, res)) return
+        if (!validateRequest(req, res)) return
 
         const { phone, otp, newPassword } = req.body
 
@@ -257,7 +257,7 @@ router.post(
         body('password').notEmpty().withMessage('Password is required')
     ],
     async (req, res) => {
-        if (!validate(req, res)) return
+        if (!validateRequest(req, res)) return
 
         const { email, password } = req.body
 

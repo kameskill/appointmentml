@@ -38,6 +38,6 @@ const otpRequestSchema = new mongoose.Schema(
     { timestamps: true }
 )
 
-otpRequestSchema.index({ createdAt: 1 }, { expireAfterSeconds: 900 })
+otpRequestSchema.index({ createdAt: 1 }, { expireAfterSeconds: 600 })
 
 module.exports = mongoose.model('OtpRequest', otpRequestSchema)
