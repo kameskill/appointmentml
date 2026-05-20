@@ -19,10 +19,11 @@ export default function Login() {
     useEffect(() => {
         if (user?.role === 'admin') {
             navigate('/admin', { replace: true })
+        } else if (user?.role === 'user') {
+            navigate('/dashboard', { replace: true })
         }
     }, [user, navigate])
 
-    const navigate2 = useNavigate()
     const handleInputChange = (e) => {
         const { name, value } = e.target
         setFormData(prev => ({ ...prev, [name]: value }))
@@ -54,7 +55,7 @@ export default function Login() {
             if (data.user.role === 'admin') {
                 navigate('/admin')
             } else {
-                navigate('/')
+                navigate('/dashboard')
             }
         } catch (error) {
             toast.error(getErrorMessage(error))
@@ -127,7 +128,7 @@ export default function Login() {
                                 <input type='checkbox' className='w-4 h-4 rounded border-gray-300' />
                                 <span className='text-gray-600 text-sm'>Remember me</span>
                             </label>
-                            <Link to='#' className='text-purple-600 hover:text-purple-700 text-sm font-semibold'>Forgot password?</Link>
+                            <Link to='/forgot-password' className='text-purple-600 hover:text-purple-700 text-sm font-semibold'>Forgot password?</Link>
                         </div>
 
                         <motion.button

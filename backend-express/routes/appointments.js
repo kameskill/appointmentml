@@ -3,7 +3,7 @@ const router = express.Router()
 const mongoose = require('mongoose')
 const { body, validationResult } = require('express-validator')
 const Appointment = require('../models/Appointment')
-const { protect } = require('../middleware/auth')
+const { protect, optionalProtect } = require('../middleware/auth')
 
 const SERVICE_PRICES = {
     'Full Grooming Package': 1200,
@@ -19,6 +19,7 @@ const SERVICE_PRICES = {
 // @access  Public (guests can also book)
 router.post(
     '/',
+    optionalProtect,
     [
         body('petName').notEmpty().trim().withMessage('Pet name is required'),
         body('breed').notEmpty().trim().withMessage('Breed is required'),

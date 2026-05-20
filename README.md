@@ -9,10 +9,13 @@ AI-powered pet grooming appointment booking platform with ML-driven haircut reco
 - ✅ Services showcase
 - ✅ About & Contact pages (submits to backend)
 - ✅ User authentication (Login/Signup → JWT)
+- ✅ OTP-based signup and password reset via mobile number (TextBee)
 - ✅ Auth-aware header (shows logged-in user, logout)
 - ✅ Booking system with real ML recommendations
 - ✅ Real-time time slot availability from backend
+- ✅ Dedicated user dashboard (bookings, notifications, settings)
 - ✅ Admin dashboard with live data from backend
+- ✅ Admin-to-user notifications
 - ✅ Toast notifications replacing all browser alerts
 - ✅ Loading states throughout
 
@@ -99,6 +102,8 @@ JWT_EXPIRE=7d
 ML_SERVICE_URL=http://localhost:5001
 NODE_ENV=development
 FRONTEND_URL=http://localhost:5173
+TEXTBEE_API_KEY=<your_textbee_api_key>
+TEXTBEE_DEVICE_ID=<your_textbee_device_id>
 ```
 
 ### 3. ML Service (Flask)
@@ -143,8 +148,11 @@ Then login with that account — the header will show "Admin" link.
 ### Auth
 | Method | Path | Description |
 |---|---|---|
-| POST | `/api/auth/register` | Register new user |
+| POST | `/api/auth/register/send-otp` | Send OTP for signup |
+| POST | `/api/auth/register` | Verify OTP and create user |
 | POST | `/api/auth/login` | Login and get JWT |
+| POST | `/api/auth/password/send-otp` | Send OTP for password reset |
+| POST | `/api/auth/password/reset` | Reset password with OTP |
 | GET | `/api/auth/me` | Get current user (requires JWT) |
 
 ### Appointments
@@ -175,6 +183,14 @@ Then login with that account — the header will show "Admin" link.
 | PATCH | `/api/admin/appointments/:id/status` | Update status |
 | GET | `/api/admin/analytics` | Revenue + trends |
 | GET | `/api/admin/contacts` | All contact messages |
+| GET | `/api/admin/notifications` | List user notifications |
+| POST | `/api/admin/notifications` | Send notification to users |
+
+### Notifications (requires user JWT)
+| Method | Path | Description |
+|---|---|---|
+| GET | `/api/notifications` | Get user notifications |
+| PATCH | `/api/notifications/:id/read` | Mark notification as read |
 
 ## 📧 Contact
 
@@ -183,4 +199,3 @@ For issues or questions, reach out to admin@timmytails.com
 ## 📄 License
 
 MIT License
-

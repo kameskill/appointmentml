@@ -66,6 +66,7 @@ app.use('/api/auth', authLimiter, require('./routes/auth'))
 app.use('/api/appointments', bookingLimiter, apiLimiter, require('./routes/appointments'))
 app.use('/api/admin', apiLimiter, require('./routes/admin'))
 app.use('/api/contact', contactLimiter, require('./routes/contact'))
+app.use('/api/notifications', apiLimiter, require('./routes/notifications'))
 
 // Health check
 app.get('/api/health', (req, res) => {

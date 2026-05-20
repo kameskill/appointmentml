@@ -18,7 +18,7 @@ export default function Header({ scrolled }) {
     { label: 'Contact', href: '/contact' },
   ]
 
-  if (location.pathname === '/admin') {
+  if (location.pathname === '/admin' || location.pathname === '/dashboard') {
     return null
   }
   const handleLogout = () => {
@@ -68,6 +68,11 @@ export default function Header({ scrolled }) {
           {user?.role === 'admin' && (
             <Link to="/admin" className="text-purple-600 font-bold hover:text-purple-800 transition-colors">
               Admin
+            </Link>
+          )}
+          {user?.role === 'user' && (
+            <Link to="/dashboard" className="text-purple-600 font-bold hover:text-purple-800 transition-colors">
+              Dashboard
             </Link>
           )}
         </motion.div>
@@ -150,6 +155,11 @@ export default function Header({ scrolled }) {
               {user?.role === 'admin' && (
                 <Link to="/admin" className="block text-purple-600 font-bold py-1" onClick={() => setIsOpen(false)}>
                   Admin
+                </Link>
+              )}
+              {user?.role === 'user' && (
+                <Link to="/dashboard" className="block text-purple-600 font-bold py-1" onClick={() => setIsOpen(false)}>
+                  Dashboard
                 </Link>
               )}
               <div className="pt-3 border-t border-gray-200">

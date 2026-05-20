@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
-import { LogOut, BarChart3, Calendar, TrendingUp, Users, DollarSign, CheckCircle, Clock, Loader2, RefreshCw } from 'lucide-react'
+import { LogOut, BarChart3, Calendar, TrendingUp, Users, DollarSign, CheckCircle, Clock, Loader2, RefreshCw, Bell } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { adminApi, getErrorMessage } from '../utils/api'
 import { useAuth } from '../context/AuthContext'
@@ -29,6 +29,8 @@ export default function Admin() {
     const [stats, setStats] = useState(null)
     const [appointments, setAppointments] = useState([])
     const [analytics, setAnalytics] = useState(null)
+    const [notifications, setNotifications] = useState([])
+    const [notificationForm, setNotificationForm] = useState({ title: '', message: '' })
     const [statusFilter, setStatusFilter] = useState('')
     const [updatingId, setUpdatingId] = useState(null)
 
@@ -65,9 +67,18 @@ export default function Admin() {
         }
     }
 
+    const fetchNotifications = async () => {
+        try {
+            const { data } = await adminApi.getNotifications()
+            setNotifications(data.notifications || [])
+        } catch (e) {
+            toast.error(getErrorMessage(e))
+        }
+    }
+
     const loadAll = async () => {
         setLoading(true)
-        await Promise.all([fetchStats(), fetchAppointments(), fetchAnalytics()])
+        await Promise.all([fetchStats(), fetchAppointments(), fetchAnalytics(), fetchNotifications()])
         setLoading(false)
     }
 
@@ -92,6 +103,25 @@ export default function Admin() {
         logout()
         toast.success('Logged out')
         navigate('/')
+    }
+
+    const handleCreateNotification = async (e) => {
+        e.preventDefault()
+        if (!notificationForm.title.trim() || !notificationForm.message.trim()) {
+            toast.error('Title and message are required')
+            return
+        }
+        try {
+            await adminApi.createNotification({
+                title: notificationForm.title.trim(),
+                message: notificationForm.message.trim()
+            })
+            toast.success('Notification sent to users')
+            setNotificationForm({ title: '', message: '' })
+            fetchNotifications()
+        } catch (e) {
+            toast.error(getErrorMessage(e))
+        }
     }
 
     const StatCard = ({ icon: Icon, label, value, change, color }) => (
@@ -154,7 +184,8 @@ export default function Admin() {
                         { id: 'overview', label: 'Overview', icon: BarChart3 },
                         { id: 'appointments', label: 'Appointments', icon: Calendar },
                         { id: 'analytics', label: 'Analytics', icon: TrendingUp },
-                        { id: 'ml-trends', label: 'ML Trends', icon: TrendingUp }
+                        { id: 'ml-trends', label: 'ML Trends', icon: TrendingUp },
+                        { id: 'notifications', label: 'Notifications', icon: Bell }
                     ].map(tab => {
                         const Icon = tab.icon
                         return (
@@ -421,6 +452,61 @@ export default function Admin() {
                                     <p className='text-xs text-gray-600'>{sub}</p>
                                 </div>
                             ))}
+                        </div>
+                    </motion.div>
+                )}
+
+                {/* Notifications Tab */}
+                {activeTab === 'notifications' && (
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className='space-y-6'>
+                        <div className='bg-white rounded-xl p-6 shadow-md border border-gray-100'>
+                            <h3 className='text-xl font-bold text-gray-900 mb-4'>Send Notification to Users</h3>
+                            <form onSubmit={handleCreateNotification} className='space-y-4'>
+                                <div>
+                                    <label className='block text-gray-700 font-bold mb-2'>Title</label>
+                                    <input
+                                        value={notificationForm.title}
+                                        onChange={(e) => setNotificationForm(prev => ({ ...prev, title: e.target.value }))}
+                                        className='w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-purple-600'
+                                        placeholder='e.g., New promo available'
+                                    />
+                                </div>
+                                <div>
+                                    <label className='block text-gray-700 font-bold mb-2'>Message</label>
+                                    <textarea
+                                        value={notificationForm.message}
+                                        onChange={(e) => setNotificationForm(prev => ({ ...prev, message: e.target.value }))}
+                                        rows={4}
+                                        className='w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-purple-600 resize-none'
+                                        placeholder='Write a message for all users'
+                                    />
+                                </div>
+                                <button
+                                    type='submit'
+                                    className='bg-gradient-to-r from-purple-600 to-purple-500 text-white px-5 py-2.5 rounded-lg font-bold hover:shadow-lg hover:shadow-purple-500/40 transition-all'
+                                >
+                                    Send Notification
+                                </button>
+                            </form>
+                        </div>
+
+                        <div className='bg-white rounded-xl p-6 shadow-md border border-gray-100'>
+                            <h3 className='text-xl font-bold text-gray-900 mb-4'>Recent Notifications</h3>
+                            {notifications.length === 0 ? (
+                                <p className='text-gray-500'>No notifications sent yet.</p>
+                            ) : (
+                                <div className='space-y-3'>
+                                    {notifications.map((n) => (
+                                        <div key={n._id} className='p-4 bg-gray-50 rounded-lg border border-gray-200'>
+                                            <p className='font-bold text-gray-900'>{n.title}</p>
+                                            <p className='text-sm text-gray-700 mt-1'>{n.message}</p>
+                                            <p className='text-xs text-gray-500 mt-2'>
+                                                {new Date(n.createdAt).toLocaleString('en-PH')}
+                                            </p>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
                         </div>
                     </motion.div>
                 )}
