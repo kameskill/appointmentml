@@ -4,6 +4,7 @@ const mongoose = require('mongoose')
 const Appointment = require('../models/Appointment')
 const Contact = require('../models/Contact')
 const User = require('../models/User')
+const Notification = require('../models/Notification')
 const { protect, adminOnly } = require('../middleware/auth')
 
 // All admin routes require auth + admin role
@@ -212,6 +213,51 @@ router.get('/contacts', async (req, res) => {
     try {
         const contacts = await Contact.find().sort({ createdAt: -1 }).limit(50)
         res.json({ success: true, contacts })
+    } catch (error) {
+        console.error(error)
+        res.status(500).json({ success: false, message: 'Server error' })
+    }
+})
+
+// @route   GET /api/admin/notifications
+// @desc    Get admin-created notifications
+// @access  Admin
+router.get('/notifications', async (req, res) => {
+    try {
+        const notifications = await Notification.find()
+            .sort({ createdAt: -1 })
+            .limit(100)
+            .populate('createdBy', 'firstName lastName email')
+
+        res.json({ success: true, notifications })
+    } catch (error) {
+        console.error(error)
+        res.status(500).json({ success: false, message: 'Server error' })
+    }
+})
+
+// @route   POST /api/admin/notifications
+// @desc    Send notification to users
+// @access  Admin
+router.post('/notifications', async (req, res) => {
+    const { title, message } = req.body
+
+    if (!title || !String(title).trim()) {
+        return res.status(400).json({ success: false, message: 'Title is required' })
+    }
+    if (!message || !String(message).trim()) {
+        return res.status(400).json({ success: false, message: 'Message is required' })
+    }
+
+    try {
+        const notification = await Notification.create({
+            title: String(title).trim(),
+            message: String(message).trim(),
+            audience: 'all-users',
+            createdBy: req.user._id
+        })
+
+        res.status(201).json({ success: true, message: 'Notification sent to users', notification })
     } catch (error) {
         console.error(error)
         res.status(500).json({ success: false, message: 'Server error' })

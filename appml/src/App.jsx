@@ -11,6 +11,8 @@ import Booking from './pages/Booking'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
 import Admin from './pages/Admin'
+import UserDashboard from './pages/UserDashboard'
+import ForgotPassword from './pages/ForgotPassword'
 
 function App() {
   const [scrolled, setScrolled] = useState(false)
@@ -40,6 +42,8 @@ function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
               <Route path="/admin" element={<Admin />} />
+              <Route path="/dashboard" element={<UserDashboard />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
             </Routes>
           </main>
           <Footer />

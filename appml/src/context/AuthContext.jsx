@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react'
-import { authApi, getErrorMessage } from '../utils/api'
+import { authApi } from '../utils/api'
 
 const AuthContext = createContext(null)
 
@@ -36,13 +36,37 @@ export function AuthProvider({ children }) {
         return data
     }
 
+    const sendRegisterOtp = async (formData) => {
+        const { data } = await authApi.sendRegisterOtp(formData)
+        return data
+    }
+
+    const sendPasswordOtp = async (phone) => {
+        const { data } = await authApi.sendPasswordOtp({ phone })
+        return data
+    }
+
+    const resetPasswordWithOtp = async ({ phone, otp, newPassword }) => {
+        const { data } = await authApi.resetPassword({ phone, otp, newPassword })
+        return data
+    }
+
     const logout = () => {
         localStorage.removeItem('token')
         setUser(null)
     }
 
     return (
-        <AuthContext.Provider value={{ user, loading, login, register, logout }}>
+        <AuthContext.Provider value={{
+            user,
+            loading,
+            login,
+            register,
+            sendRegisterOtp,
+            sendPasswordOtp,
+            resetPasswordWithOtp,
+            logout
+        }}>
             {children}
         </AuthContext.Provider>
     )

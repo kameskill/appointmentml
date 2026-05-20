@@ -17,7 +17,10 @@ api.interceptors.request.use((config) => {
 // ── Auth ──────────────────────────────────────────────────────────────────────
 export const authApi = {
     login: (data) => api.post('/auth/login', data),
+    sendRegisterOtp: (data) => api.post('/auth/register/send-otp', data),
     register: (data) => api.post('/auth/register', data),
+    sendPasswordOtp: (data) => api.post('/auth/password/send-otp', data),
+    resetPassword: (data) => api.post('/auth/password/reset', data),
     me: () => api.get('/auth/me')
 }
 
@@ -40,7 +43,15 @@ export const adminApi = {
     getAppointments: (params) => api.get('/admin/appointments', { params }),
     updateStatus: (id, status) => api.patch(`/admin/appointments/${id}/status`, { status }),
     getAnalytics: () => api.get('/admin/analytics'),
-    getContacts: () => api.get('/admin/contacts')
+    getContacts: () => api.get('/admin/contacts'),
+    getNotifications: () => api.get('/admin/notifications'),
+    createNotification: (data) => api.post('/admin/notifications', data)
+}
+
+// ── Notifications ──────────────────────────────────────────────────────────────
+export const notificationsApi = {
+    getMine: () => api.get('/notifications'),
+    markAsRead: (id) => api.patch(`/notifications/${id}/read`)
 }
 
 // ── ML Service ────────────────────────────────────────────────────────────────
